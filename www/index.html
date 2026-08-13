@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: flex; justify-content: center; align-items: center; color: #333; }
+        
+        /* Login Screen Design */
+        .login-container { background-color: #ffffff; padding: 40px 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .login-container h2 { margin-bottom: 25px; color: #1e1e2f; font-size: 26px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group input { width: 100%; padding: 12px 15px; border: 1px solid #cccccc; border-radius: 6px; font-size: 16px; outline: none; transition: 0.3s; }
+        .input-group input:focus { border-color: #38a169; box-shadow: 0 0 5px rgba(56,161,105,0.3); }
+        .terms-box { display: flex; align-items: flex-start; text-align: left; gap: 8px; margin-bottom: 25px; font-size: 14px; color: #555; }
+        .terms-box input { margin-top: 3px; }
+        .login-btn { width: 100%; padding: 12px; background-color: #38a169; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .login-btn:hover { background-color: #2f855a; }
+
+        /* Responsive Dashboard Layout */
+        .dashboard-wrapper { display: none; width: 100%; min-height: 100vh; background-color: #f4f6f9; flex-direction: column; }
+        
+        /* Mobile Friendly Top Navbar */
+        .top-navbar { background-color: #1e1e2f; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .top-navbar h2 { font-size: 20px; }
+        .logout-btn { background: #e53e3e; color: white; text-align: center; border-radius: 6px; cursor: pointer; padding: 6px 12px; text-decoration: none; font-size: 14px; font-weight: bold; border: none; }
+        
+        .main-content { flex: 1; padding: 20px; width: 100%; max-width: 1200px; margin: 0 auto; }
+        .header { margin-bottom: 20px; }
+        .header h3 { font-size: 22px; color: #2d3748; }
+        
+        /* Grid Layout for Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #38a169; }
+        .stat-card h4 { color: #718096; font-size: 13px; margin-bottom: 5px; }
+        .stat-card p { font-size: 24px; font-weight: bold; color: #2d3748; }
+
+        .action-section { margin-bottom: 20px; }
+        .action-btn { width: 100%; padding: 12px; background-color: #3182ce; color: white; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: bold; }
+
+        /* Fixed Table for Mobile Screens */
+        .table-container { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 500px; }
+        th { background-color: #edf2f7; color: #4a5568; padding: 12px; font-weight: 600; font-size: 14px; }
+        td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #4a5568; font-size: 14px; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .badge-admin { background-color: #feebcb; color: #c05621; }
+        .badge-user { background-color: #e6fffa; color: #234e52; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Login Page -->
+    <div class="login-container" id="loginPage">
+        <h2>Admin Login</h2>
+        <form onsubmit="handleLogin(event)">
+            <div class="input-group">
+                <input type="tel" id="mobile" placeholder="Mobile Number (10 Digits)" required pattern="[0-9]{10}">
+            </div>
+            <div class="input-group">
+                <input type="text" id="referral" placeholder="Referral Code (Optional)">
+            </div>
+            <div class="terms-box">
+                <input type="checkbox" id="terms" required>
+                <label for="terms">I agree to the Terms and Conditions of the application.</label>
+            </div>
+            <button type="submit" class="login-btn">Login to Dashboard</button>
+        </form>
+    </div>
+
+    <!-- 2. Super Admin Dashboard (Mobile Responsive) -->
+    <div class="dashboard-wrapper" id="dashboardPage">
+        <!-- Top Navbar Instead of Sidebar for Better Mobile UI -->
+        <div class="top-navbar">
+            <h2>Super Admin</h2>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h3>System Overview</h3>
+                <p style="color: #718096; font-size: 14px;">Welcome, App Owner</p>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Total Users</h4>
+                    <p id="totalUsersCount">1</p>
+                </div>
+                <div class="stat-card">
+                    <h4>My Code</h4>
+                    <p style="font-size: 18px; color: #3182ce;" id="ownerCodeDisplay">OWNER777</p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="action-section">
+                <button class="action-btn" onclick="addNewUser()">+ Register New Referral User</button>
+            </div>
+
+            <!-- Users Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Mobile</th>
+                            <th>Referral Used</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- JS Dynamic Data -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Temporary Array (Database)
+        let usersDatabase = [
+            { id: "UID-1001", mobile: "9999999999", refCode: "Main Owner", role: "Super Admin" }
+        ];
+
+        function handleLogin(event) {
+            event.preventDefault();
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'flex';
+            document.body.style.alignItems = 'stretch'; 
+            renderTable();
+        }
+
+        // Generate Automatic Unique Referral Code for users based on phone number
+        function generateUserCode(mobile) {
+            return "REF" + mobile.substring(6, 10) + Math.floor(10 + Math.random() * 90);
+        }
+
+        function addNewUser() {
+            let mockMobiles = ["9875412541", "8874125632", "7014521485", "6325147896"];
+            let randomMobile = mockMobiles[Math.floor(Math.random() * mockMobiles.length)];
+            let newId = "UID-" + (1001 + usersDatabase.length);
+            
+            // Add user with their own upcoming referral system structure
+            usersDatabase.push({
+                id: newId,
+                mobile: randomMobile,
+                refCode: "OWNER777", // Aapke code se join hua
+                role: "User"
+            });
+            
+            renderTable();
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = ""; 
+            
+            usersDatabase.forEach(user => {
+                let badgeClass = user.role === "Super Admin" ? "badge-admin" : "badge-user";
+                tableBody.innerHTML += `
+                    <tr>
+                        <td><strong>${user.id}</strong></td>
+                        <td>${user.mobile}</td>
+                        <td><span style="color: #3182ce; font-weight:bold;">${user.refCode}</span></td>
+                        <td><span class="badge ${badgeClass}">${user.role}</span></td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('totalUsersCount').innerText = usersDatabase.length;
+        }
+
+        function logout() {
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+            document.body.style.alignItems = 'center'; 
+        }
+    </script>
+</body>
+</html>
