@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Credpool</string>
+    <string name="title_activity_main">Credpool</string>
+    <string name="package_name">com.owner.credpool</string>
+    <string name="custom_url_scheme">com.owner.credpool</string>
+</resources>

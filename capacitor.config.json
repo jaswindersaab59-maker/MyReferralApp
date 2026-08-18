@@ -1,5 +1,9 @@
 {
-  "appId": "com.owner.credpool",
+  "appId": "com.credpool.app",
   "appName": "Credpool",
-  "webDir": "www"
+  "webDir": "www",
+  "server": {
+    "url": "https://github.io/credpool-app-owner/",
+    "cleartext": true
+  }
 }
